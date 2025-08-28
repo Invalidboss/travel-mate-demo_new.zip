@@ -232,6 +232,12 @@ export default function App() {
     return { expSum, perDiem, mileage, total: expSum + perDiem + mileage };
   }
 
+  const summary = useMemo(() => {
+    const total = state.trips.reduce((sum, t) => sum + totalForTrip(t.id).total, 0);
+    const count = state.trips.length;
+    return { count, total, average: count ? total / count : 0 };
+  }, [state.trips, state.expenses]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-900 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -246,6 +252,23 @@ export default function App() {
             <button className="px-3 py-2 rounded-xl bg-white border hover:bg-gray-50" onClick={() => importJson((s) => setState(s))}>Import JSON</button>
           </div>
         </header>
+
+        <Card className="mb-6">
+          <div className="grid md:grid-cols-3 gap-3 text-center">
+            <div>
+              <div className="text-2xl font-bold" data-testid="trip-count">{summary.count}</div>
+              <div className="text-sm text-gray-500">Trips</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold" data-testid="total-expenses">{currency(summary.total)}</div>
+              <div className="text-sm text-gray-500">Total expenses</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold" data-testid="avg-expenses">{currency(summary.average)}</div>
+              <div className="text-sm text-gray-500">Avg per trip</div>
+            </div>
+          </div>
+        </Card>
 
         <Card className="mb-6">
           <div className="grid md:grid-cols-3 gap-3">
