@@ -2,6 +2,8 @@
 
 A minimal, GitHub-ready React + TypeScript + Vite + Tailwind project with the full interactive demo page.
 
+Trips now capture customer and project alongside the usual travel details.
+
 ## Quickstart
 
 ```bash
