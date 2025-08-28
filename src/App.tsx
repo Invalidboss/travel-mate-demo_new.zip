@@ -34,6 +34,8 @@ interface Trip {
   startDate: string;
   endDate: string;
   purpose: string;
+  customer: string;
+  project: string;
   mileageKm: number; // total km for the trip
   includeBreakfast: boolean;
   includeLunch: boolean;
@@ -125,6 +127,8 @@ const DemoSeed: AppState = {
       startDate: todayISO(),
       endDate: todayISO(),
       purpose: "Kundentermin",
+      customer: "ACME GmbH",
+      project: "Rollout",
       mileageKm: 580,
       includeBreakfast: false,
       includeLunch: true,
@@ -160,7 +164,9 @@ export default function App() {
     const f = state.trips.filter(
       (t) =>
         t.destination.toLowerCase().includes(filter.toLowerCase()) ||
-        t.purpose.toLowerCase().includes(filter.toLowerCase())
+        t.purpose.toLowerCase().includes(filter.toLowerCase()) ||
+        t.customer.toLowerCase().includes(filter.toLowerCase()) ||
+        t.project.toLowerCase().includes(filter.toLowerCase())
     );
     return [...f].sort((a, b) => (sortKey === "start" ? a.startDate.localeCompare(b.startDate) : a.destination.localeCompare(b.destination)));
   }, [state.trips, filter, sortKey]);
@@ -173,6 +179,8 @@ export default function App() {
       startDate: todayISO(),
       endDate: todayISO(),
       purpose: "",
+      customer: "",
+      project: "",
       mileageKm: 0,
       includeBreakfast: false,
       includeLunch: false,
@@ -251,7 +259,7 @@ export default function App() {
           <div className="grid md:grid-cols-3 gap-3">
             <input
               className="border rounded-xl px-3 py-2"
-              placeholder="Filter by destination/purpose"
+              placeholder="Filter by destination, purpose, customer or project"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
@@ -272,7 +280,7 @@ export default function App() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h3 className="text-lg font-semibold">{t.origin || "(origin)"} → {t.destination || "(destination)"}</h3>
-                    <p className="text-sm text-gray-500">{t.startDate} → {t.endDate} · {t.purpose || "(purpose)"}</p>
+                    <p className="text-sm text-gray-500">{t.startDate} → {t.endDate} · {t.purpose || "(purpose)"} · {t.customer || "(customer)"} · {t.project || "(project)"}</p>
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold">{currency(sums.total)}</div>
@@ -297,6 +305,12 @@ export default function App() {
                     </Row>
                     <Row label="Purpose">
                       <input className="w-full border rounded-xl px-3 py-2" value={t.purpose} onChange={(e) => updateTrip(t.id, { purpose: e.target.value })} />
+                    </Row>
+                    <Row label="Customer">
+                      <input className="w-full border rounded-xl px-3 py-2" value={t.customer} onChange={(e) => updateTrip(t.id, { customer: e.target.value })} />
+                    </Row>
+                    <Row label="Project">
+                      <input className="w-full border rounded-xl px-3 py-2" value={t.project} onChange={(e) => updateTrip(t.id, { project: e.target.value })} />
                     </Row>
                     <Row label="Mileage (km)">
                       <input type="number" min={0} className="w-full border rounded-xl px-3 py-2" value={t.mileageKm} onChange={(e) => updateTrip(t.id, { mileageKm: Number(e.target.value) || 0 })} />
