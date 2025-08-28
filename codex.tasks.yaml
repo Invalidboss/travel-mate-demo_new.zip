@@ -1,0 +1,13 @@
+version: 1
+tasks:
+  - id: add-vitest
+    goal: "Add Vitest + React Testing Library, configure basic unit tests."
+    acceptance:
+      - "npm test runs unit tests"
+      - "One test covers perDiemDE calculation"
+
+  - id: per-diem-rule-table
+    goal: "Move per-diem rates to a data table and use it in calculations."
+    acceptance:
+      - "Rates are not hardcoded in App.tsx"
+      - "Unit tests cover 8h/24h and reductions"
