@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from './App';
+import App, { matchesFilter } from './App';
 import { describe, it, expect } from 'vitest';
 
 describe('Trip fields', () => {
@@ -19,5 +19,25 @@ describe('Trip fields', () => {
 
     expect(customerInput.value).toBe('ACME');
     expect(projectInput.value).toBe('Launch');
+  });
+});
+
+describe('Trip filter', () => {
+  it('handles trips without customer or project', () => {
+    const trip = {
+      id: 't1',
+      origin: '',
+      destination: 'Paris',
+      startDate: '2025-01-01',
+      endDate: '2025-01-02',
+      purpose: '',
+      mileageKm: 0,
+      includeBreakfast: false,
+      includeLunch: false,
+      includeDinner: false,
+    } as any;
+
+    expect(matchesFilter(trip, 'par')).toBe(true);
+    expect(matchesFilter(trip, 'acme')).toBe(false);
   });
 });

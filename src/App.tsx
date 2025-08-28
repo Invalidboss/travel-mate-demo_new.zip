@@ -148,6 +148,16 @@ const DemoSeed: AppState = {
   ],
 };
 
+export function matchesFilter(t: Trip, filter: string) {
+  const q = filter.toLowerCase();
+  return (
+    t.destination.toLowerCase().includes(q) ||
+    t.purpose.toLowerCase().includes(q) ||
+    (t.customer ?? "").toLowerCase().includes(q) ||
+    (t.project ?? "").toLowerCase().includes(q)
+  );
+}
+
 export default function App() {
   const [state, setState] = useState<AppState>(() => {
     const t = DemoSeed.trips[0];
@@ -161,14 +171,12 @@ export default function App() {
   const [sortKey, setSortKey] = useState<"start" | "dest">("start");
 
   const visibleTrips = useMemo(() => {
-    const f = state.trips.filter(
-      (t) =>
-        t.destination.toLowerCase().includes(filter.toLowerCase()) ||
-        t.purpose.toLowerCase().includes(filter.toLowerCase()) ||
-        t.customer.toLowerCase().includes(filter.toLowerCase()) ||
-        t.project.toLowerCase().includes(filter.toLowerCase())
+    const f = state.trips.filter((t) => matchesFilter(t, filter));
+    return [...f].sort((a, b) =>
+      sortKey === "start"
+        ? a.startDate.localeCompare(b.startDate)
+        : a.destination.localeCompare(b.destination)
     );
-    return [...f].sort((a, b) => (sortKey === "start" ? a.startDate.localeCompare(b.startDate) : a.destination.localeCompare(b.destination)));
   }, [state.trips, filter, sortKey]);
 
   function addTrip() {
