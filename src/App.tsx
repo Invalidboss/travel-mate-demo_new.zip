@@ -116,6 +116,20 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
+export type SortKey = "start" | "dest" | "expense";
+
+export function sortTrips(trips: Trip[], expenses: Expense[], sortKey: SortKey) {
+  const sum = (id: string) =>
+    expenses
+      .filter((e) => e.tripId === id)
+      .reduce((a, b) => a + (isFinite(b.amount) ? b.amount : 0), 0);
+  return [...trips].sort((a, b) => {
+    if (sortKey === "start") return a.startDate.localeCompare(b.startDate);
+    if (sortKey === "dest") return a.destination.localeCompare(b.destination);
+    return sum(b.id) - sum(a.id);
+  });
+}
+
 const DemoSeed: AppState = {
   trips: [
     {
@@ -154,7 +168,7 @@ export default function App() {
   });
 
   const [filter, setFilter] = useState("");
-  const [sortKey, setSortKey] = useState<"start" | "dest">("start");
+  const [sortKey, setSortKey] = useState<SortKey>("start");
 
   const visibleTrips = useMemo(() => {
     const f = state.trips.filter(
@@ -162,8 +176,8 @@ export default function App() {
         t.destination.toLowerCase().includes(filter.toLowerCase()) ||
         t.purpose.toLowerCase().includes(filter.toLowerCase())
     );
-    return [...f].sort((a, b) => (sortKey === "start" ? a.startDate.localeCompare(b.startDate) : a.destination.localeCompare(b.destination)));
-  }, [state.trips, filter, sortKey]);
+    return sortTrips(f, state.expenses, sortKey);
+  }, [state.trips, state.expenses, filter, sortKey]);
 
   function addTrip() {
     const trip: Trip = {
@@ -258,6 +272,7 @@ export default function App() {
             <select className="border rounded-xl px-3 py-2" value={sortKey} onChange={(e) => setSortKey(e.target.value as any)}>
               <option value="start">Sort by start date</option>
               <option value="dest">Sort by destination</option>
+              <option value="expense">Sort by expanse height</option>
             </select>
             <div className="text-sm text-gray-500 flex items-center">{visibleTrips.length} trip(s)</div>
           </div>

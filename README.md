@@ -2,6 +2,11 @@
 
 A minimal, GitHub-ready React + TypeScript + Vite + Tailwind project with the full interactive demo page.
 
+## Features
+
+- Track trips and expenses
+- Sort trips by start date, destination, or expense total
+
 ## Quickstart
 
 ```bash
